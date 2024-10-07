@@ -233,6 +233,14 @@ jobs:
                     -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} -DMINGW=TRUE \
                     -DFULL_RUST_LTO=${{ needs.vars.outputs.full_lto }}
 
+          echo CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=${{ needs.vars.outputs.cmake_build_type }} \
+                    -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.cmake_arch }} -DCMAKE_SYSTEM_NAME=Windows \
+                    -DCMAKE_EXE_LINKER_FLAGS=" ${{ matrix.ldlibs }} ${{ needs.vars.outputs.lto_ldflags }}" \
+                    -DRust_CARGO_TARGET=${{ matrix.rust_target }} -DRUST_BUILD_STD=${{ matrix.build_rust_std }} -DPREFER_STATIC_LINKING=ON \
+                    -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
+                    -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} -DMINGW=TRUE \
+                    -DFULL_RUST_LTO=${{ needs.vars.outputs.full_lto }} | tee -a $GITHUB_OUTPUT
+
           echo -e "\n### build ###\n"
           cmake --build build -j $(nproc) -v
           ${{ matrix.strip }} build/magiskboot*.exe
