@@ -164,6 +164,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/${{ env.progname }}-llvm-mingw
           tar -x -f ${{ env.progname }}-llvm-mingw.tar.xz -C $GITHUB_WORKSPACE/${{ env.progname }}-llvm-mingw --strip-components=1
           rm -f ${{ env.progname }}-llvm-mingw.tar.xz
+          echo "Prepare (LLVM MinGW) $PWD" | tee -a $GITHUB_OUTPUT
 
       - name: Prepare (PATH)
         run: |
@@ -240,6 +241,8 @@ jobs:
                     -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
                     -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} -DMINGW=TRUE \
                     -DFULL_RUST_LTO=${{ needs.vars.outputs.full_lto }} | tee -a $GITHUB_OUTPUT
+
+          which i686-w64-mingw32-strip
 
           echo -e "\n### build ###\n"
           cmake --build build -j $(nproc) -v
