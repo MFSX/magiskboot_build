@@ -189,23 +189,11 @@ jobs:
         if: matrix.build_rust_std == 'OFF'
         run: |
           curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.77.2
-
-      - name: Prepare (Nightly Rust)
-        if: matrix.build_rust_std == 'ON'
-        run: |
-          curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
-
       - name: Prepare (Rust STD)
         if: matrix.build_rust_std == 'OFF'
         run: |
           . "$HOME/.cargo/env"
           rustup target add ${{ matrix.rust_target }}
-
-      - name: Prepare (Rust source)
-        if: matrix.build_rust_std == 'ON'
-        run: |
-          . "$HOME/.cargo/env"
-          rustup component add rust-src
 
       - name: Synchronize (source)
         uses: yogeshlonkar/wait-for-jobs@v0.2.1
@@ -258,7 +246,7 @@ jobs:
         with:
           if-no-files-found: error
           name: ${{ env.progname }}-${{ needs.vars.outputs.short_sha }}-${{ needs.vars.outputs.build_type }}-${{ env.upload_prefix }}-${{ matrix.crt }}-${{ matrix.upload_suffix }}
-          path: ${{ github.workspace }}/${{ env.progname }}-out/magiskboot*.exe
+          path: ${{ github.workspace }}
 
       # Fail fast
       - name: Cancel other jobs
